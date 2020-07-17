@@ -1,0 +1,50 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">Google Xml
+    </h1>
+<div class="panel panel-primary">
+    <div class="panel-heading">Select promotions to generate feed or generate feed for all products.</div>
+    <div class="panel-body">After generating the feed, reload the page (F5) to see the link to the newly created xml file.</div>
+</div>
+  </div>
+</div>
+
+<div class="row">
+  <%= form_tag admin_panel_google_feeds_path, method: :post, class: 'form-horizontal' do %>
+      <% @promotions.each do |promo| %>
+          <div class="checkbox">
+            <%= label_tag do %>
+              <%= radio_button_tag 'promotion_ids[]', promo.id %><%= sanitize promo.name, tags: [] %><%= ' (ID ' + promo.id.to_s + ')' %>
+            <% end %>
+          </div>
+
+<% Dir["public/data/google/*.xml"].each do |file| %>
+            <% if file.include? promo.id.to_s %>
+    <li><%= link_to 'Opens in a new window', file[/\/.*/], target: '_blank', class: 'btn btn-light' %></li>
+   <p style="font-size:x-small;"><%= 'The feed was created ' + File.ctime(file).to_s %></p>
+<% end %>
+<% end %>
+
+      <% end %>
+          <div class="checkbox">
+            <label>
+              <input type="radio" name="promotion_ids[]" id="promotion_ids_" value="0" checked />Feed for all products (ID 0)
+</label>          </div>
+    <li><a target="_blank" type="button" class="btn btn-light" href="/data/google/[&quot;0&quot;].xml">Opens in a new window</a></li>
+<p style="font-size:x-small;"><%= 'The feed was created ' + File.ctime(Rails.root.join('public', 'data', 'google', '["0"].xml')).to_s %></p>
+    <div class="actions">
+<br>
+      <%= submit_tag 'Generate feed', class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+   li {
+    list-style-type: none;
+   }
+   ul {
+    margin-left: 0;
+    padding-left: 0;
+   }
+</style>
